@@ -2,6 +2,7 @@ from flask import Flask, render_template_string, request, session
 import random
 from datetime import datetime
 import re
+import os
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
@@ -136,7 +137,6 @@ FORBIDDEN = [
     'kostenlos', 'bester', 'top1', '100% billigster preis', 'bewertung abgeben', 'beleidigung', 'konkurrenz', 'rabatt'
 ]
 
-
 def generate_post_maps(company, city, service, extra=''):
     templates = [
         f"{company} ist Ihr regionaler Experte für {service} in {city}. Wir stehen für Qualität und Kundenzufriedenheit. Kontaktieren Sie uns direkt über Google für mehr Informationen. {extra}",
@@ -150,7 +150,6 @@ def generate_post_maps(company, city, service, extra=''):
     post = re.sub(r'(\. )+', '. ', post)
     return post
 
-
 def generate_post_facebook(company, city, service, extra=''):
     templates = [
         f"🎉 {company} aus {city} – dein Ansprechpartner für {service}! 🚀\n\nLerne uns kennen: Seit Jahren betreuen wir Kunden in {city} rund um {service}. Für uns zählen Qualität und persönliche Beratung.\n\n{extra}\n\nFragen? Kommentiere oder schreib uns direkt auf Facebook! 👇\n#facebook #unternehmen #lokal #{service.replace(' ', '')}",
@@ -163,14 +162,12 @@ def generate_post_facebook(company, city, service, extra=''):
     post = re.sub(r'(\. )+', '. ', post)
     return post
 
-
 def check_forbidden(text):
     text_lower = text.lower()
     for rule in FORBIDDEN:
         if re.search(rule, text_lower):
             return "Der Post könnte Inhalte enthalten, die gegen die Google-Richtlinien verstoßen (z.B. Telefonnummer, E-Mail, Link oder unzulässige Phrasen). Bitte prüfe deinen Text!"
     return ""
-
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -213,15 +210,6 @@ def index():
     return render_template_string(TEMPLATE, formdata=formdata, post=post, post_type=post_type,
                                   post_warning=post_warning, history=history)
 
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-# ... tu kończy się reszta kodu aplikacji, np. definicje routes itp.
-
-import os
-
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(debug=True, host="0.0.0.0", port=port)
-
